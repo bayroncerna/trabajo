@@ -1,5 +1,9 @@
 const students = [];
 
+ document.getElementById("studentForm").addEventListener("submit",function (e){
+  e.preventDefault();  
+ });
+
 const form = document.getElementById("studentform");
 const tablebody = document.querySelector("#studentTable tbody");
 const promedios = document.getElementById("average");
@@ -75,7 +79,13 @@ function addStudentToTable(student) {
         <td>${student.name}</td>
         <td>${student.lastName}</td>
         <td>${student.grade.toFixed(1)}</td>
+        <td> <button class="delete">Eliminar</button></td>
     `;
+
+row.querySelector(".delete").addEventListener("click",function (){
+  deleteEstudiante(student,row);
+});
+
   tablebody.appendChild(row);
 }
 
@@ -87,4 +97,13 @@ function calcularPromedio() {
   const total = students.reduce((sum, student) => sum + student.grade, 0);
   const prom = total / students.length;
   promedios.textContent = "Promedio General del Curso: " + prom.toFixed(1);
+}
+
+function deleteEstudiante(student,row){
+  const index=student.indexOF(student);
+  if(index > -1){
+    students.splice(index,1);
+    row.remove();
+    calcularPromedio();
+  }
 }
