@@ -7,16 +7,16 @@ body {
   font-family: Arial, sans-serif;
   margin: 20px;
   background: #ffffff;
-  color: #333;
+  color: #000000;
 }
 
 h2 {
   text-align: center;
-  color: #2c3e50;
+  color: #000000;
 }
 
 form {
-  background: #fff;
+  background: #c5c0c0;
   padding: 20px;
   border-radius: 8px;
   max-width: 500px;
@@ -38,14 +38,14 @@ input[type="text"],
 input[type="number"] {
   width: 100%;
   padding: 8px 10px;
-  border: 1.5px solid #ccc;
+  border: 1.5px solid #ffffff;
   border-radius: 4px;
   font-size: 16px;
 }
 
 button {
-  background-color: #3498db;
-  color: white;
+  background-color: #0e54bd;
+  color: rgb(255, 255, 255);
   padding: 12px 25px;
   border: none;
   border-radius: 4px;
@@ -56,7 +56,7 @@ button {
 }
 
 button:hover {
-  background-color: #2980b9;
+  background-color: #2a811f;
 }
 
 #average {
@@ -71,26 +71,26 @@ table {
   max-width: 700px;
   margin: 0 auto;
   border-collapse: collapse;
-  background: white;
+  background: rgb(255, 255, 255);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 thead {
-  background-color: #3498db;
-  color: white;
+  background-color: #0099ff;
+  color: rgb(255, 255, 255);
 }
 
 th,
 td {
   padding: 12px 15px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #000000;
 }
 
 tbody tr:hover {
-  background-color: #f1f1f1;
+  background-color: #b9abab;
 }
 
 /* Responsive */

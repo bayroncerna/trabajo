@@ -1,18 +1,20 @@
 const students = [];
 
- document.getElementById("studentForm").addEventListener("submit",function (e){
-  e.preventDefault();  
- });
-
 const form = document.getElementById("studentform");
 const tablebody = document.querySelector("#studentTable tbody");
 const promedios = document.getElementById("average");
+
+const statsDiv = document.createElement("div");
+statsDiv.id = "stats";
+form.insertAdjacentElement("afterend", statsDiv);
 
 const inputs = {
   name: form.querySelector("#name"),
   lastName: form.querySelector("#lastName"),
   grade: form.querySelector("#grade"),
 };
+
+let editIndex = null;
 
 inputs.name.addEventListener("invalid", () => {
   if (inputs.name.validity.valueMissing) {
@@ -39,7 +41,10 @@ inputs.lastName.addEventListener("input", () => {
 inputs.grade.addEventListener("invalid", () => {
   if (inputs.grade.validity.valueMissing) {
     inputs.grade.setCustomValidity("Por favor Ponga Su Nota");
-  } else if (inputs.grade.validity.rangeUnderflow || inputs.grade.validity.rangeOverflow) {
+  } else if (
+    inputs.grade.validity.rangeUnderflow ||
+    inputs.grade.validity.rangeOverflow
+  ) {
     inputs.grade.setCustomValidity("Por favor, ingrese una nota válida entre 1.0 y 7.0.");
   } else {
     inputs.grade.setCustomValidity("");
@@ -52,9 +57,7 @@ inputs.grade.addEventListener("input", () => {
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
-
   if (!form.checkValidity()) {
-
     form.reportValidity();
     return;
   }
@@ -65,9 +68,17 @@ form.addEventListener("submit", (e) => {
     grade: parseFloat(inputs.grade.value),
   };
 
-  students.push(student);
-  addStudentToTable(student);
+  if (editIndex !== null) {
+    students[editIndex] = student;
+    updateTable();
+    editIndex = null;
+  } else {
+    students.push(student);
+    addStudentToTable(student);
+  }
+
   calcularPromedio();
+  actualizarEstadisticas();
 
   form.reset();
   inputs.name.focus();
@@ -76,17 +87,34 @@ form.addEventListener("submit", (e) => {
 function addStudentToTable(student) {
   const row = document.createElement("tr");
   row.innerHTML = `
-        <td>${student.name}</td>
-        <td>${student.lastName}</td>
-        <td>${student.grade.toFixed(1)}</td>
-        <td> <button class="delete">Eliminar</button></td>
-    `;
+    <td>${student.name}</td>
+    <td>${student.lastName}</td>
+    <td>${student.grade.toFixed(1)}</td>
+    <td>
+      <button class="edit">Editar</button>
+      <button class="delete">Eliminar</button>
+    </td>
+  `;
 
-row.querySelector(".delete").addEventListener("click",function (){
-  deleteEstudiante(student,row);
-});
+  row.querySelector(".delete").addEventListener("click", function () {
+    deleteEstudiante(student, row);
+  });
+
+  row.querySelector(".edit").addEventListener("click", function () {
+    editIndex = students.indexOf(student);
+    inputs.name.value = student.name;
+    inputs.lastName.value = student.lastName;
+    inputs.grade.value = student.grade;
+  });
 
   tablebody.appendChild(row);
+}
+
+function updateTable() {
+  tablebody.innerHTML = "";
+  students.forEach((student) => {
+    addStudentToTable(student);
+  });
 }
 
 function calcularPromedio() {
@@ -99,11 +127,27 @@ function calcularPromedio() {
   promedios.textContent = "Promedio General del Curso: " + prom.toFixed(1);
 }
 
-function deleteEstudiante(student,row){
-  const index=student.indexOF(student);
-  if(index > -1){
-    students.splice(index,1);
+function actualizarEstadisticas() {
+  const total = students.length;
+  const aprobados = students.filter(s => s.grade >= 4.0).length;
+  const reprobados = total - aprobados;
+
+  const aprobadosPct = total > 0 ? ((aprobados / total) * 100).toFixed(1) : 0;
+  const reprobadosPct = total > 0 ? ((reprobados / total) * 100).toFixed(1) : 0;
+
+  statsDiv.innerHTML = `
+    <p>Total de estudiantes: ${total}</p>
+    <p>Porcentaje de aprobados: ${aprobadosPct}%</p>
+    <p>Porcentaje de reprobados: ${reprobadosPct}%</p>
+  `;
+}
+
+function deleteEstudiante(student, row) {
+  const index = students.indexOf(student);
+  if (index > -1) {
+    students.splice(index, 1);
     row.remove();
     calcularPromedio();
+    actualizarEstadisticas();
   }
 }
